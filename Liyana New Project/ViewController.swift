@@ -62,10 +62,10 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
         
         if let appDict = self.appDataArray.object(at: indexPath.row) as? NSDictionary {
             cell?.textLabel?.text = appDict.value(forKey: "name") as? String
-            cell?.imageView?.image = appDict.value(forKey: "artworkUrl100") as? UIImage
+           
         } else {
             cell?.textLabel?.text = "Not found"
-             cell?.imageView?.image = nil
+             
         }
         
         return cell!
