@@ -12,6 +12,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let a = 10
+        let b = 10
+        var mul = a * b
+        print(mul)
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
 
