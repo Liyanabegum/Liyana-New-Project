@@ -14,8 +14,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let a = 10
         let b = 10
-        var mul = a * b
-        print(mul)
+        var sub = a - b
+        print(sub)
         
         
         // Do any additional setup after loading the view, typically from a nib.
