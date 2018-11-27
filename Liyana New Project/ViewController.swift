@@ -17,7 +17,7 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let  urlString = "https://rss.itunes.apple.com/api/v1/us/ios-apps/top-free/all/10/explicit.json"
+        let  urlString = "https://rss.itunes.apple.com/api/v1/in/ios-apps/top-free/all/10/explicit.json"
        getAppDetails(AppStoreURL: urlString, onSuccess:{ (data) in
             if let recievedData = data as? NSArray {
                 if recievedData.count > 0 {
@@ -63,13 +63,23 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
         if let appDict = self.appDataArray.object(at: indexPath.row) as? NSDictionary {
             cell?.textLabel?.text = appDict.value(forKey: "name") as? String
            
+            let image = appDict.value(forKey: "artworkUrl100") as? URL
+            let url = image
+            if let data = try? Data(contentsOf: url!){
+                if url != nil {
+                     cell?.imageView?.image = UIImage(data: data)
+                }else {
+                   cell?.imageView?.image = nil
+                }
+            }
         } else {
             cell?.textLabel?.text = "Not found"
-             
+            
         }
         
         return cell!
     }
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
