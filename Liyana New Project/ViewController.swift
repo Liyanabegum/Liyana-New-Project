@@ -9,29 +9,26 @@
 import UIKit
 
 class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSource {
-   
-    
     
     @IBOutlet weak var appTableView: UITableView!
     var appDataArray = NSMutableArray()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let  urlString = "https://rss.itunes.apple.com/api/v1/in/ios-apps/top-free/all/10/explicit.json"
-       getAppDetails(AppStoreURL: urlString, onSuccess:{ (data) in
+        let  urlString = "https://rss.itunes.apple.com/api/v1/us/ios-apps/top-free/all/5/explicit.json"
+        getAppDetails(AppStoreURL: urlString, onSuccess:{ (data) in
             if let recievedData = data as? NSArray {
                 if recievedData.count > 0 {
-                self.appDataArray.addObjects(from: recievedData as! [Any])
-                DispatchQueue.main.async {
-                    self.appTableView.reloadData()
+                    self.appDataArray.addObjects(from: recievedData as! [Any])
+                    DispatchQueue.main.async {
+                        self.appTableView.reloadData()
+                    }
                 }
-            }
             }
         }) {(error) in
             print(error.localizedDescription)
         }
     }
-  //artworkUrl100
     func getAppDetails(AppStoreURL:String, onSuccess:@escaping ((Any)->Void), onFailure:@escaping ((Error)->Void)){
         let url = URL(string: AppStoreURL)
         let urlRequest = URLRequest(url: url!)
@@ -39,7 +36,7 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
             if (data != nil) {
                 do {
                     let dataResponse = try JSONSerialization.jsonObject(with: data!, options: [])
-                     let receivedData = (((dataResponse as! NSDictionary).value(forKey: "feed") as! NSDictionary).value(forKey: "results"))
+                    let receivedData = (((dataResponse as! NSDictionary).value(forKey: "feed") as! NSDictionary).value(forKey: "results"))
                     onSuccess(receivedData  ?? NSArray() )
                 } catch let error {
                     onFailure(error)
@@ -61,20 +58,21 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
         }
         
         if let appDict = self.appDataArray.object(at: indexPath.row) as? NSDictionary {
-            cell?.textLabel?.text = appDict.value(forKey: "name") as? String
-           
-            let image = appDict.value(forKey: "artworkUrl100") as? URL
-            let url = image
-            if let data = try? Data(contentsOf: url!){
-                if url != nil {
-                     cell?.imageView?.image = UIImage(data: data)
-                }else {
-                   cell?.imageView?.image = nil
+            cell?.textLabel?.text = appDict.value(forKey: "artistName") as? String
+            
+            let  imageUrl = URL(string: appDict.value(forKey: "artworkUrl100") as! String)
+            DispatchQueue.global().async {
+                let data = try? Data(contentsOf: imageUrl!)
+                if let data = data {
+                    let  image = UIImage(data: data)
+                    DispatchQueue.main.async {
+                        cell?.imageView?.image = image
+                    }
                 }
             }
         } else {
             cell?.textLabel?.text = "Not found"
-            
+            cell?.imageView?.image = nil
         }
         
         return cell!
@@ -84,7 +82,7 @@ class ViewController: UIViewController , UITableViewDelegate,UITableViewDataSour
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
-
+    
     
     
     override func didReceiveMemoryWarning() {
